@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SOC Level 1 — Guía de estudio por módulos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#EEF2F4; --surface:#FFFFFF; --ink:#14202B; --muted:#51606D; --line:#D3DCE2;
+  --accent:#1D5C7C; --accent-soft:#DCEAF1; --reto:#6B4FA0; --reto-soft:#E9E3F4;
+  --nota:#7A4E00; --nota-soft:#FFF3D6; --code:#E4EBEF;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1A22; --surface:#162530; --ink:#E3EBF0; --muted:#9DB0BD; --line:#27394640;
+    --line:#2A3C49; --accent:#7DBBDD; --accent-soft:#1B3646; --reto:#B9A3EA; --reto-soft:#2B2442;
+    --nota:#F0C26B; --nota-soft:#3A2E14; --code:#1E3140;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1A22; --surface:#162530; --ink:#E3EBF0; --muted:#9DB0BD;
+  --line:#2A3C49; --accent:#7DBBDD; --accent-soft:#1B3646; --reto:#B9A3EA; --reto-soft:#2B2442;
+  --nota:#F0C26B; --nota-soft:#3A2E14; --code:#1E3140;
+}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px);scroll-behavior:smooth;background:var(--bg)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+a:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+code{font-family:var(--mono);font-size:.86em;background:var(--code);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{font-family:var(--mono);font-size:.84rem;background:var(--code);padding:14px 16px;border-radius:6px;overflow-x:auto;margin:10px 0;line-height:1.5}
+pre code{background:none;padding:0;font-size:inherit}
+
+.shell{display:grid;grid-template-columns:268px minmax(0,1fr);gap:56px;max-width:1160px;margin:0 auto;padding:28px 20px 96px}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start;max-height:calc(100vh - 32px);overflow-y:auto;padding-right:4px}
+.side summary{cursor:pointer;font-weight:600;padding:6px 0;list-style:none}
+.side summary::-webkit-details-marker{display:none}
+.side nav a{display:flex;gap:10px;align-items:baseline;padding:6px 8px;border-radius:6px;text-decoration:none;color:var(--ink);font-size:.92rem;line-height:1.35}
+.side nav a:hover{background:var(--accent-soft)}
+.side nav .n{font-family:var(--mono);font-size:.8rem;color:var(--muted);min-width:1.6em;text-align:right}
+.side nav .ok{margin-left:auto;color:var(--accent);visibility:hidden;font-weight:600}
+.side nav a.done .ok{visibility:visible}
+.side nav a.done{color:var(--muted)}
+.side hr{border:0;border-top:1px solid var(--line);margin:10px 0}
+
+main{min-width:0;max-width:760px}
+h1{font-size:2rem;line-height:1.2;margin:0 0 10px;font-weight:600;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 20px;max-width:62ch}
+.progress{display:flex;align-items:center;gap:12px;margin:0 0 22px;font-size:.92rem;color:var(--muted)}
+.bar{flex:1;max-width:260px;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.aviso{background:var(--nota-soft);color:var(--ink);border-left:3px solid var(--nota);padding:12px 16px;border-radius:0 6px 6px 0;font-size:.93rem;margin:0 0 44px}
+.aviso strong{color:var(--nota)}
+
+.mod{padding:36px 0 8px;border-top:1px solid var(--line)}
+.mod header{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;margin-bottom:8px}
+.mod .big{font-family:var(--mono);font-size:2.6rem;line-height:1;color:var(--accent);font-weight:500;min-width:1.2em}
+.mod h2{font-size:1.45rem;line-height:1.25;margin:0 0 6px;font-weight:600}
+.lead{margin:0;color:var(--muted);max-width:62ch}
+.room{padding:18px 0 4px}
+.room h3{font-size:1.04rem;margin:0 0 6px;font-weight:600;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tag{font-size:.74rem;font-weight:500;background:var(--reto-soft);color:var(--reto);padding:1px 9px;border-radius:99px}
+.room ul{margin:0;padding-left:1.15em}
+.room li{margin:4px 0;max-width:68ch}
+.room li::marker{color:var(--accent)}
+.nota{background:var(--nota-soft);border-left:3px solid var(--nota);padding:12px 16px;border-radius:0 6px 6px 0;margin:22px 0 12px;font-size:.95rem}
+.nota strong{color:var(--nota)}
+.tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.88rem;color:var(--muted);margin:10px 0 6px}
+.tools span.t{background:var(--accent-soft);color:var(--accent);padding:1px 10px;border-radius:99px;font-weight:500}
+.done-row{margin:14px 0 28px}
+.done-row label{display:inline-flex;gap:8px;align-items:center;cursor:pointer;font-size:.93rem}
+.done-row input{width:18px;height:18px;accent-color:var(--accent)}
+
+#cheats{padding-top:40px;border-top:1px solid var(--line)}
+#cheats h2{font-size:1.45rem;margin:0 0 4px}
+#cheats h3{font-size:1.05rem;margin:28px 0 6px}
+.tw{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:420px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.84rem}
+td:first-child{white-space:nowrap}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:20px;padding-top:18px}
+  .side{position:static;max-height:none;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 14px}
+  .side summary::after{content:" ▾";color:var(--muted)}
+  h1{font-size:1.65rem}
+  .mod .big{font-size:2rem}
+  .mod header{gap:12px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bar i{transition:none}}
+@media print{.side,.done-row{display:none}.shell{display:block}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <details id="navwrap" open>
+      <summary>Módulos del path</summary>
+      <nav id="nav" aria-label="Módulos"></nav>
+      <hr>
+      <nav aria-label="Extras"><a href="#cheats"><span class="n">+</span> Chuleta de referencia rápida</a></nav>
+    </details>
+  </aside>
+
+  <main>
+    <h1>SOC Level 1: guía de estudio por módulos</h1>
+    <p class="sub">Apuntes de cada módulo del path de TryHackMe, room por room, con las ideas que más se repiten en el trabajo real de un analista de nivel 1.</p>
+    <div class="progress" aria-live="polite"><span id="pcount">0 de 14 módulos estudiados</span><div class="bar"><i id="pbar"></i></div></div>
+    <p class="aviso"><strong>Antes de empezar.</strong> La estructura sigue el listado actual del path (14 módulos). TryHackMe lo actualiza con frecuencia, así que algún nombre o el orden de una room puede variar. En los retos y en las rooms con laboratorio los apuntes son conceptuales a propósito: no incluyen respuestas ni flags, porque el valor está en resolverlos tú.</p>
+
+    <div id="mods"></div>
+
+    <section id="cheats">
+      <h2>Chuleta de referencia rápida</h2>
+      <p class="lead">Lo que conviene tener a mano mientras haces los laboratorios.</p>
+
+      <h3>Pirámide del dolor (de menos a más dolor para el atacante)</h3>
+      <div class="tw"><table>
+        <tr><th>Nivel</th><th>Indicador</th><th>Dificultad para el atacante al cambiarlo</th></tr>
+        <tr><td>1</td><td>Valores hash</td><td>Trivial: basta recompilar o cambiar un byte</td></tr>
+        <tr><td>2</td><td>Direcciones IP</td><td>Fácil: otro servidor o VPN</td></tr>
+        <tr><td>3</td><td>Nombres de dominio</td><td>Simple: registrar otro dominio</td></tr>
+        <tr><td>4</td><td>Artefactos de red y de host</td><td>Molesto: user-agent, rutas, claves de registro</td></tr>
+        <tr><td>5</td><td>Herramientas</td><td>Desafiante: tiene que reemplazar o reescribir su herramienta</td></tr>
+        <tr><td>6</td><td>TTPs</td><td>Duro: obliga a cambiar su forma de operar</td></tr>
+      </table></div>
+
+      <h3>Cyber Kill Chain (Lockheed Martin)</h3>
+      <p>Reconocimiento → Armamentización → Entrega → Explotación → Instalación → Comando y control (C2) → Acciones sobre el objetivo.</p>
+
+      <h3>Eventos de Windows más útiles</h3>
+      <div class="tw"><table>
+        <tr><th>ID</th><th>Qué indica</th></tr>
+        <tr><td>4624 / 4625</td><td>Inicio de sesión correcto / fallido</td></tr>
+        <tr><td>4634 / 4647</td><td>Cierre de sesión / cierre iniciado por el usuario</td></tr>
+        <tr><td>4648</td><td>Inicio de sesión con credenciales explícitas</td></tr>
+        <tr><td>4672</td><td>Privilegios especiales asignados a una sesión</td></tr>
+        <tr><td>4688</td><td>Creación de proceso (con línea de comandos si está habilitado)</td></tr>
+        <tr><td>4698</td><td>Tarea programada creada</td></tr>
+        <tr><td>4720 / 4726</td><td>Cuenta de usuario creada / eliminada</td></tr>
+        <tr><td>4732</td><td>Miembro añadido a un grupo local con seguridad</td></tr>
+        <tr><td>4769</td><td>Solicitud de ticket de servicio Kerberos (útil para detectar Kerberoasting)</td></tr>
+        <tr><td>7045</td><td>Servicio nuevo instalado (registro System)</td></tr>
+        <tr><td>1102</td><td>Registro de auditoría borrado</td></tr>
+        <tr><td>4104</td><td>Bloque de script de PowerShell (registro Operational)</td></tr>
+      </table></div>
+      <p>Tipos de inicio de sesión frecuentes: <code>2</code> interactivo, <code>3</code> red, <code>10</code> escritorio remoto (RDP).</p>
+
+      <h3>Eventos de Sysmon</h3>
+      <div class="tw"><table>
+        <tr><th>ID</th><th>Qué indica</th></tr>
+        <tr><td>1</td><td>Creación de proceso (con hash y proceso padre)</td></tr>
+        <tr><td>3</td><td>Conexión de red</td></tr>
+        <tr><td>7</td><td>Carga de imagen/DLL</td></tr>
+        <tr><td>8</td><td>CreateRemoteThread (inyección de código)</td></tr>
+        <tr><td>10</td><td>Acceso a otro proceso (típico en volcado de LSASS)</td></tr>
+        <tr><td>11</td><td>Archivo creado</td></tr>
+        <tr><td>12 / 13 / 14</td><td>Cambios en el registro</td></tr>
+        <tr><td>22</td><td>Consulta DNS</td></tr>
+      </table></div>
+
+      <h3>Consultas de ejemplo en SIEM</h3>
+<pre><code># Splunk (SPL): intentos fallidos de inicio de sesión por usuario y origen
+index=* EventCode=4625
+| stats count by Account_Name, Source_Network_Address
+| sort - count
+
+# Elastic (KQL, en Kibana Discover)
+event.code: 4625 and winlog.computer_name: "WIN-01"</code></pre>
+      <p>Los nombres de los campos dependen de cómo se ingestaron los datos. Revisa siempre la lista de campos disponibles antes de escribir la consulta.</p>
+
+      <h3>Filtros de visualización de Wireshark</h3>
+<pre><code>ip.addr == 10.0.0.5
+tcp.port == 443
+http.request.method == "POST"
+dns.qry.name contains "ejemplo"
+tcp.flags.syn == 1 &amp;&amp; tcp.flags.ack == 0     # SYN sin ACK: posible escaneo
+arp.duplicate-address-detected                  # posible ARP spoofing
+frame contains "password"</code></pre>
+
+      <h3>Estructura de una regla de Snort</h3>
+<pre><code>alert tcp any any -> any 80 (msg:"GET a /admin"; content:"GET"; content:"/admin"; sid:1000001; rev:1;)
+
+# Modo IDS leyendo un PCAP
+sudo snort -c /etc/snort/snort.conf -r captura.pcap -A console -q</code></pre>
+      <p>Orden de la cabecera: acción, protocolo, IP y puerto origen, dirección, IP y puerto destino, y entre paréntesis las opciones.</p>
+
+      <h3>Autenticación de correo</h3>
+      <div class="tw"><table>
+        <tr><th>Mecanismo</th><th>Qué comprueba</th></tr>
+        <tr><td>SPF</td><td>Si el servidor que envió el correo está autorizado por el DNS del dominio</td></tr>
+        <tr><td>DKIM</td><td>Si la firma criptográfica del mensaje es válida y no se alteró en tránsito</td></tr>
+        <tr><td>DMARC</td><td>Política (none, quarantine, reject) y alineación entre el dominio visible y el autenticado</td></tr>
+      </table></div>
+
+      <h3>Registros de Linux</h3>
+<pre><code>/var/log/auth.log        # Debian/Ubuntu: autenticación, sudo, ssh
+/var/log/secure          # RHEL/CentOS: equivalente
+/var/log/syslog          # eventos generales
+/var/log/audit/audit.log # auditd
+journalctl -u ssh        # registros de un servicio con systemd
+grep "Failed password" /var/log/auth.log
+last ; lastb             # sesiones correctas y fallidas</code></pre>
+    </section>
+  </main>
+</div>
+
+<script>
+var MODS = [
+{
+  t: "Blue Team Introduction",
+  g: "Qué es el Blue Team y el SOC, quién hace qué dentro de él y por qué las personas y los sistemas son los dos grandes puntos de entrada de un ataque.",
+  rooms: [
+    {n: "Junior Security Analyst Intro", k: [
+      "Un SOC combina **personas, procesos y tecnología** para vigilar, detectar, investigar y responder a incidentes de forma continua (24/7).",
+      "El día a día de un L1: revisar la cola de alertas, decidir si es **verdadero o falso positivo**, documentar y **escalar** lo que supere su alcance.",
+      "Un falso positivo es una alerta sin amenaza real; un falso negativo es una amenaza que no generó alerta, y es el más peligroso."
+    ]},
+    {n: "SOC Role in Blue Team", k: [
+      "Blue Team = defensa (detectar, contener, recuperar). Red Team = ataque simulado. Purple Team = colaboración entre ambos.",
+      "Niveles habituales: **L1** triaje de alertas, **L2** investigación profunda y respuesta a incidentes, **L3** caza de amenazas, ingeniería de detección y casos avanzados.",
+      "Otros roles cercanos: analista de inteligencia de amenazas, ingeniero de detección, forense digital, jefe de SOC."
+    ]},
+    {n: "Humans as Attack Vectors", k: [
+      "Las personas son el objetivo preferido porque es más barato engañar a alguien que explotar un sistema.",
+      "Técnicas: phishing, spear phishing, vishing (voz), smishing (SMS), pretexting, baiting, tailgating.",
+      "Palancas psicológicas: urgencia, autoridad, miedo, curiosidad y confianza.",
+      "Defensas: formación y simulacros, MFA, botón de reportar correo sospechoso, filtros de correo y una cultura donde reportar no se castiga."
+    ]},
+    {n: "Systems as Attack Vectors", k: [
+      "Los sistemas se atacan por **vulnerabilidades sin parchear, configuraciones erróneas, credenciales por defecto y servicios expuestos**.",
+      "Superficie de ataque = todo lo que un atacante puede alcanzar. Reducirla es parte del hardening.",
+      "CVE identifica una vulnerabilidad; CVSS la puntúa por gravedad (de 0 a 10).",
+      "Medidas: gestión de parches, mínimo privilegio, segmentación, inventario de activos y escaneo de vulnerabilidades."
+    ]}
+  ],
+  r: "El SOC existe para reducir el tiempo entre que algo malo ocurre y alguien lo detecta y actúa. Todo el path gira alrededor de esa idea.",
+  tools: []
+},
+{
+  t: "SOC Team Internals",
+  g: "Las habilidades prácticas de un L1: hacer triaje, clasificar, reportar y escalar, y cómo se mide si el SOC lo hace bien.",
+  rooms: [
+    {n: "SOC L1 Alert Triage", k: [
+      "Flujo de trabajo: **revisar la alerta → enriquecer con contexto → clasificar → documentar → escalar o cerrar**.",
+      "Preguntas base: qué pasó, quién (usuario y host), dónde, cuándo y si es esperable en ese entorno.",
+      "Prioriza por severidad **y** criticidad del activo: una alerta media en un servidor crítico puede pesar más que una alta en un equipo de pruebas.",
+      "Escala cuando hay indicios de compromiso real, movimiento lateral, datos sensibles o dudas que no puedes resolver con tu playbook."
+    ]},
+    {n: "SOC L1 Alert Reporting", k: [
+      "Un buen reporte de escalado es **claro, breve y basado en hechos**: separa lo observado de lo supuesto.",
+      "Incluye: resumen, línea de tiempo, activos y usuarios afectados, indicadores (IOCs), evidencia, acciones ya tomadas y recomendación.",
+      "Escribe pensando en que el L2 lo leerá sin haber visto tu pantalla."
+    ]},
+    {n: "SOC Workbooks and Lookups", k: [
+      "Los **workbooks/playbooks** son procedimientos paso a paso por tipo de alerta; dan consistencia y aceleran el triaje.",
+      "Los **lookups** son listas de consulta para enriquecer: inventario de activos, usuarios VIP, listas de permitidos y bloqueados, reputación de IPs."
+    ]},
+    {n: "SOC Metrics and Objectives", k: [
+      "Métricas típicas: **MTTD** (tiempo medio de detección), **MTTA** (de reconocimiento), **MTTR** (de respuesta), volumen de alertas, tasa de falsos positivos y backlog.",
+      "Demasiadas alertas de baja calidad generan **fatiga de alertas** y hacen que se pierdan las reales.",
+      "Los SLA fijan cuánto tiempo hay para atender cada severidad."
+    ]},
+    {n: "Introduction to Phishing", c: 1, k: [
+      "Primer contacto con el **SOC Simulator**: una cola de alertas realista donde practicas el flujo completo.",
+      "Al clasificar phishing mira remitente, dominio, enlaces, adjuntos y si el usuario llegó a interactuar con el correo.",
+      "Practica redactar el caso de cierre como lo haría un analista real."
+    ]}
+  ],
+  r: "Triar bien no es ir rápido: es tomar una decisión defendible y dejarla documentada para el siguiente analista.",
+  tools: ["Cola de alertas", "Tickets", "Playbooks"]
+},
+{
+  t: "Core SOC Solutions",
+  g: "Las tres familias de herramientas que sostienen un SOC: EDR, SIEM y SOAR, con Splunk y Elastic como ejemplos de SIEM.",
+  rooms: [
+    {n: "Introduction to EDR", k: [
+      "El EDR instala un agente en el endpoint, recoge telemetría (procesos, archivos, red, registro) y detecta comportamientos sospechosos.",
+      "Permite investigar con el **árbol de procesos** y responder: aislar el equipo, matar un proceso, poner un archivo en cuarentena.",
+      "Diferencia con un antivirus clásico: el EDR registra y permite investigar, no solo bloquear firmas conocidas."
+    ]},
+    {n: "Introduction to SIEM", k: [
+      "Un SIEM **recoge, normaliza, correlaciona y alerta** sobre logs de muchas fuentes (firewall, servidores, endpoints, correo, nube).",
+      "La **correlación** une eventos aislados en una historia: por ejemplo, muchos fallos de login seguidos de uno correcto desde la misma IP.",
+      "Conceptos clave: fuentes de log, parsing, reglas de detección, dashboards y retención."
+    ]},
+    {n: "Splunk: The Basics", k: [
+      "Se busca con **SPL** (Search Processing Language) en la app Search & Reporting.",
+      "Campos básicos: [[index]], [[sourcetype]], [[source]], [[host]] y el rango de tiempo, que siempre debes acotar.",
+      "Patrón habitual: filtrar → [[| stats count by campo]] → [[| sort - count]] → pivotar a otro campo.",
+      "Los datos llegan con forwarders o inputs configurados; los eventos se indexan y se extraen campos al buscar."
+    ]},
+    {n: "Elastic Stack: The Basics", k: [
+      "Componentes: **Elasticsearch** (almacén y búsqueda), **Logstash** (procesamiento), **Kibana** (interfaz) y **Beats** (agentes ligeros).",
+      "En Kibana usas **Discover** con **KQL**, filtros por campo, rango de tiempo y data views.",
+      "Las visualizaciones y los dashboards ayudan a ver patrones antes de bajar al evento individual."
+    ]},
+    {n: "Introduction to SOAR", k: [
+      "SOAR = Orquestación, Automatización y Respuesta: conecta herramientas y ejecuta **playbooks automáticos**.",
+      "Casos típicos: enriquecer una IP o hash automáticamente, abrir el ticket, bloquear un indicador, notificar al usuario.",
+      "Reduce el MTTR y libera al analista de tareas repetitivas; no sustituye su criterio."
+    ]}
+  ],
+  r: "SIEM te dice qué pasó en toda la red, EDR te dice qué pasó dentro de un equipo, SOAR automatiza lo que hacer después.",
+  tools: ["Splunk", "Elastic / Kibana", "EDR", "SOAR"]
+},
+{
+  t: "Cyber Defence Frameworks",
+  g: "Los modelos mentales que usan los analistas para entender qué hace un atacante, en qué fase está y cómo priorizar la defensa.",
+  rooms: [
+    {n: "Pyramid of Pain", k: [
+      "Modelo de David Bianco: cuanto más arriba detectas, más dolor causas al atacante al bloquearlo.",
+      "De abajo a arriba: hashes, IPs, dominios, artefactos de red y host, herramientas y TTPs (ver la chuleta del final).",
+      "Mensaje práctico: bloquear hashes es fácil pero efímero; detectar comportamiento (TTPs) es lo que realmente cuesta al adversario."
+    ]},
+    {n: "Cyber Kill Chain", k: [
+      "Siete fases: reconocimiento, armamentización, entrega, explotación, instalación, C2 y acciones sobre el objetivo.",
+      "Sirve para ubicar en qué punto de la cadena está un incidente y **dónde interrumpirla**: cuanto antes, menos daño.",
+      "Limitación: es lineal y centrada en el perímetro; los ataques reales saltan o repiten fases."
+    ]},
+    {n: "Unified Kill Chain", k: [
+      "Amplía el modelo anterior con 18 fases agrupadas en tres bloques: **In** (obtener acceso), **Through** (propagarse por la red) y **Out** (cumplir el objetivo).",
+      "Cubre mejor el movimiento lateral y la escalada de privilegios, y se relaciona bien con MITRE ATT&CK."
+    ]},
+    {n: "MITRE", k: [
+      "**ATT&CK** es una base de conocimiento de **tácticas** (el porqué), **técnicas** y **subtécnicas** (el cómo) observadas en ataques reales. Hay matrices Enterprise, Mobile e ICS.",
+      "Cada técnica tiene un ID (por ejemplo T1059 para intérpretes de comandos) y ejemplos de grupos que la usan.",
+      "El room también presenta proyectos relacionados como D3FEND (contramedidas) y CAR (analíticas de detección).",
+      "Uso diario: mapear una alerta a una técnica, comparar la cobertura de detección y hablar un lenguaje común con otros equipos."
+    ]},
+    {n: "Summit", c: 1, k: [
+      "Reto práctico que aplica la **Pirámide del Dolor**: ante un malware, vas subiendo de indicadores fáciles de evadir hacia detecciones de mayor valor.",
+      "Lección: si solo bloqueas el último indicador visto, el atacante lo cambia y vuelve."
+    ]},
+    {n: "Eviction", c: 1, k: [
+      "Reto de respuesta basado en **MITRE ATT&CK**: identificar qué técnicas usó el adversario para saber qué erradicar.",
+      "Lección: expulsar a un atacante implica cerrar todas sus vías de persistencia, no solo la que viste primero."
+    ]}
+  ],
+  r: "Los frameworks no son teoría decorativa: cuando escribas un reporte, etiqueta la actividad con tácticas y técnicas de ATT&CK y la fase de la cadena.",
+  tools: ["MITRE ATT&CK", "ATT&CK Navigator", "Diamond Model (complemento)"]
+},
+{
+  t: "Threat Analysis Tools",
+  g: "Cómo usar inteligencia de amenazas para enriquecer una alerta y decidir si un archivo, IP o dominio es malicioso.",
+  rooms: [
+    {n: "Intro to Cyber Threat Intel", k: [
+      "Niveles de CTI: **estratégica** (directivos), **táctica** (TTPs), **operacional** (campañas) y **técnica** (IOCs concretos).",
+      "Ciclo de inteligencia: dirección, recolección, procesamiento, análisis, difusión y retroalimentación.",
+      "Un IOC caduca; la inteligencia útil viene con contexto y fiabilidad. El protocolo **TLP** indica con quién se puede compartir."
+    ]},
+    {n: "File and Hash Threat Intel", k: [
+      "Un hash (MD5, SHA-1, SHA-256) identifica un archivo sin abrirlo. **Nunca ejecutes** el archivo para saber qué es.",
+      "Consulta el hash en servicios de reputación y bases de malware como VirusTotal, MalwareBazaar o Talos.",
+      "Un resultado limpio no garantiza que sea benigno: puede ser una muestra nueva o personalizada. Los sandboxes (Hybrid Analysis, Any.Run) muestran el comportamiento."
+    ]},
+    {n: "IP and Domain Threat Intel", k: [
+      "Para IPs y dominios: reputación (AbuseIPDB, Talos), **WHOIS** (fecha de registro, registrante), DNS y DNS pasivo, escaneo de URLs (URLScan, URLhaus).",
+      "Señales de alerta: dominio recién registrado, parecido a una marca (typosquatting), certificado extraño, hosting asociado a abuso.",
+      "Recuerda **defanguear** los indicadores al compartirlos (por ejemplo [[hxxp://ejemplo[.]com]])."
+    ]},
+    {n: "Invite Only", c: 1, k: [
+      "Reto donde combinas varias herramientas de inteligencia sobre un caso concreto.",
+      "Lección: ningún servicio basta por sí solo; contrasta al menos dos fuentes antes de concluir."
+    ]}
+  ],
+  r: "Enriquecer es tu trabajo diario de L1: hash, IP o dominio se consultan en más de una fuente y el resultado se anota en el ticket.",
+  tools: ["VirusTotal", "AbuseIPDB", "URLScan", "Talos", "MalwareBazaar", "Any.Run"]
+},
+{
+  t: "Network Traffic Analysis",
+  g: "Leer tráfico de red para detectar ataques, empezando por los fundamentos y llegando a Wireshark y NetworkMiner.",
+  rooms: [
+    {n: "Network Traffic Basics", k: [
+      "Formas de ver la red: **captura completa de paquetes** (PCAP), **datos de flujo** (quién habló con quién y cuánto) y **logs** de dispositivos.",
+      "El PCAP da el máximo detalle pero ocupa mucho; los flujos escalan mejor para una visión general.",
+      "Repasa el modelo OSI/TCP-IP, los puertos habituales y el handshake de TCP: SYN, SYN-ACK, ACK."
+    ]},
+    {n: "Wireshark: Basics", k: [
+      "La interfaz tiene tres paneles: lista de paquetes, detalle de capas y bytes en bruto.",
+      "**Filtro de captura** decide qué se guarda; **filtro de visualización** decide qué ves de lo ya guardado.",
+      "Utilidades: seguir un flujo TCP, colorear por reglas, marcar y comentar paquetes."
+    ]},
+    {n: "Wireshark: Packet Operations", k: [
+      "Filtros por IP, puerto, protocolo, campo y contenido (ver la chuleta del final).",
+      "Menú **Statistics**: Protocol Hierarchy, Conversations y Endpoints para detectar rápido quién genera más tráfico.",
+      "Extrae objetos transferidos (por ejemplo por HTTP) con **File > Export Objects**."
+    ]},
+    {n: "Wireshark: Traffic Analysis", k: [
+      "**Escaneos tipo Nmap**: muchos SYN a distintos puertos, respuestas RST, patrones de conexión completa o UDP.",
+      "**ARP poisoning/MITM**: respuestas ARP duplicadas o una MAC que reclama varias IPs.",
+      "**Túneles** por DNS o ICMP: consultas largas o muy frecuentes, paquetes ICMP con carga inusual.",
+      "**Protocolos en claro** (FTP, HTTP, Telnet): credenciales visibles en el flujo."
+    ]},
+    {n: "NetworkMiner", k: [
+      "Herramienta pasiva para análisis forense de PCAP: reconstruye **hosts, sesiones, archivos y credenciales** sin escribir filtros.",
+      "Muy útil para sacar rápido los archivos transferidos y una vista por host del sistema operativo y servicios."
+    ]}
+  ],
+  r: "Primero mira la foto general (estadísticas y conversaciones), luego baja al paquete. Empezar por el detalle te pierde.",
+  tools: ["Wireshark", "NetworkMiner", "PCAP"]
+},
+{
+  t: "Network Security Monitoring",
+  g: "Vigilar el perímetro y la red interna para encontrar descubrimiento, exfiltración y ataques de intermediario.",
+  rooms: [
+    {n: "Network Security Essentials", k: [
+      "Defensa en profundidad: firewall, segmentación, DMZ, proxies, IDS/IPS y monitoreo continuo.",
+      "El NSM asume que algo acabará pasando y se centra en **detectar y responder**, no solo en prevenir."
+    ]},
+    {n: "Network Discovery Detection", k: [
+      "Qué hace el atacante al entrar: barridos de ping, escaneos de puertos y escaneos ARP para mapear la red.",
+      "Cómo se ve: un origen que toca muchos destinos o muchos puertos en poco tiempo, con muchos rechazos.",
+      "Los umbrales y las ventanas de tiempo son la base de la detección."
+    ]},
+    {n: "Data Exfiltration Detection", k: [
+      "Canales comunes: subidas por HTTP/HTTPS, FTP, servicios en la nube, **túneles DNS e ICMP**.",
+      "Señales: volúmenes de salida anómalos, destinos nunca vistos, horarios raros, consultas DNS con subdominios largos o codificados."
+    ]},
+    {n: "Man-in-the-Middle Detection", k: [
+      "Variantes: **ARP spoofing**, DHCP falso, DNS spoofing y SSL stripping.",
+      "Indicios: la misma IP con dos MAC, respuestas ARP no solicitadas, cambios inesperados de gateway o de resolución DNS."
+    ]},
+    {n: "IDS Fundamentals", k: [
+      "**IDS** detecta y alerta; **IPS** además bloquea. Pueden ser de red (NIDS) o de host (HIDS).",
+      "Detección por **firmas** (rápida, conocida) o por **anomalías** (encuentra lo nuevo, más falsos positivos).",
+      "Motores habituales: Snort, Suricata y Zeek."
+    ]},
+    {n: "Snort", k: [
+      "Tres modos: sniffer, registrador de paquetes e IDS/IPS.",
+      "Las reglas tienen cabecera (acción, protocolo, origen, destino) y opciones entre paréntesis ([[msg]], [[content]], [[sid]], [[rev]]).",
+      "Puedes probar reglas contra un PCAP con la opción [[-r]]. Escribe reglas específicas para no inundar de falsos positivos."
+    ]}
+  ],
+  r: "La red casi nunca miente: aunque el atacante cambie herramientas, tiene que hablar por la red.",
+  tools: ["Snort", "Suricata", "Zeek", "Firewall"]
+},
+{
+  t: "Web Security Monitoring",
+  g: "Detectar ataques contra aplicaciones web leyendo logs de servidor y tráfico HTTP.",
+  rooms: [
+    {n: "Web Security Essentials", k: [
+      "Repasa HTTP: métodos, códigos de estado (2xx correcto, 3xx redirección, 4xx error del cliente, 5xx error del servidor) y cabeceras.",
+      "Fuentes de visibilidad: logs de acceso y error (Apache, Nginx), WAF, proxy inverso. El **OWASP Top 10** es el mapa de riesgos."
+    ]},
+    {n: "Detecting Web Attacks", k: [
+      "**SQL injection**: comillas, [[OR 1=1]], [[UNION SELECT]] en parámetros.",
+      "**XSS**: etiquetas [[script]] o manejadores de eventos en la URL o en campos.",
+      "**Path traversal**: secuencias [[../]] o su versión codificada.",
+      "**Fuerza bruta**: muchas peticiones al login desde un origen. **Escáneres**: user-agents como sqlmap o Nikto, ráfagas de 404.",
+      "Ojo con la codificación URL: decodifica antes de juzgar. Un 200 tras un payload sospechoso merece más atención que un 403."
+    ]},
+    {n: "Detecting Web Shells", k: [
+      "Un web shell es un script subido al servidor que da control remoto a través de peticiones web.",
+      "Señales: archivos nuevos o modificados en directorios web, peticiones POST a un script poco usual, parámetros tipo comando, funciones como [[eval]], [[system]] o [[base64_decode]].",
+      "A nivel de host, el servidor web lanzando una shell (por ejemplo apache → sh) es muy sospechoso. La monitorización de integridad de archivos ayuda."
+    ]},
+    {n: "Detecting Web DDoS", k: [
+      "Tipos: volumétrico, de protocolo y de capa de aplicación (HTTP flood, Slowloris).",
+      "Señales: pico de peticiones, muchos orígenes con el mismo user-agent o patrón, mismo recurso solicitado en bucle.",
+      "Mitigación: limitación de tasa, WAF, CDN y filtrado upstream. Como L1, tu parte es detectar, documentar y escalar rápido."
+    ]}
+  ],
+  r: "En logs web, decodifica, mira el código de respuesta y busca el patrón de repetición. Un solo evento rara vez cuenta la historia.",
+  tools: ["Apache / Nginx logs", "WAF", "OWASP Top 10"]
+},
+{
+  t: "Windows Security Monitoring",
+  g: "Entender el registro de eventos de Windows y usarlo para detectar técnicas de ataque habituales.",
+  rooms: [
+    {n: "Windows Logging for SOC", k: [
+      "Registros principales: **Security**, **System** y **Application**, más los de PowerShell y **Sysmon** para telemetría de endpoint avanzada.",
+      "Los Event IDs más importantes están en la chuleta del final: 4624, 4625, 4688, 4720, 7045, 1102, entre otros.",
+      "Para ver la línea de comandos en 4688 y registrar bloques de PowerShell (4104) hay que activarlo en las políticas de auditoría.",
+      "Sysmon aporta proceso padre, hashes, conexiones de red y consultas DNS."
+    ]},
+    {n: "Windows Threat Detection 1", k: [
+      "Primera tanda de laboratorios de detección sobre actividad real de atacantes en Windows.",
+      "Piensa siempre en términos de **proceso padre → proceso hijo → línea de comandos**: un documento de Office que lanza PowerShell es un patrón clásico."
+    ]},
+    {n: "Windows Threat Detection 2", k: [
+      "Continúa con técnicas de persistencia y escalada: claves de ejecución en el registro, tareas programadas (4698), servicios nuevos (7045).",
+      "Revisa también cuentas creadas o añadidas a grupos privilegiados (4720, 4732)."
+    ]},
+    {n: "Windows Threat Detection 3", k: [
+      "Cierra con acceso a credenciales y movimiento lateral: acceso a LSASS (Sysmon 10), uso de herramientas como PsExec o WMI, sesiones de tipo 3 y 10.",
+      "Correlaciona orígenes y destinos para reconstruir el recorrido del atacante."
+    ]}
+  ],
+  r: "Los nombres exactos de los casos pueden variar, pero el método es el mismo: identificar el evento, el proceso responsable y qué hizo justo antes y justo después.",
+  tools: ["Event Viewer", "Sysmon", "PowerShell logs"]
+},
+{
+  t: "Linux Security Monitoring",
+  g: "Dónde están los registros de Linux y cómo detectar accesos no autorizados, persistencia y shells inversas.",
+  rooms: [
+    {n: "Linux Logging for SOC", k: [
+      "Archivos clave: [[/var/log/auth.log]] (o [[/var/log/secure]]), [[/var/log/syslog]], y [[auditd]] para auditoría detallada.",
+      "En sistemas con systemd, [[journalctl]] consulta el diario; [[last]] y [[lastb]] muestran sesiones correctas y fallidas.",
+      "Un buen primer paso ante sospecha de acceso: filtrar [[Failed password]] y [[Accepted password]] y comparar orígenes."
+    ]},
+    {n: "Linux Threat Detection 1", k: [
+      "Detección de ataques de **fuerza bruta por SSH** y de accesos exitosos posteriores desde la misma IP.",
+      "Revisa uso de [[sudo]] y cambios de usuario para ver escalada de privilegios."
+    ]},
+    {n: "Linux Threat Detection 2", k: [
+      "Persistencia: tareas **cron**, claves añadidas a [[authorized_keys]], usuarios nuevos, servicios modificados.",
+      "Archivos con bit SUID inusuales y cambios en archivos del sistema son señales a comprobar."
+    ]},
+    {n: "Linux Threat Detection 3", k: [
+      "Ejecución y control remoto: **shells inversas**, procesos con conexiones de salida extrañas ([[ss]], [[netstat]], [[lsof]]), binarios en [[/tmp]] o [[/dev/shm]].",
+      "Cruza el historial de comandos, los procesos y las conexiones para reconstruir la línea de tiempo."
+    ]}
+  ],
+  r: "En Linux casi todo deja rastro en texto plano: aprende a filtrar bien con grep, awk y sort y ganarás mucho tiempo.",
+  tools: ["auth.log", "auditd", "journalctl", "grep / awk"]
+},
+{
+  t: "Malware Concepts for SOC",
+  g: "Reconocer tipos de malware, entender cómo se analizan y detectar el uso malicioso de herramientas legítimas del sistema.",
+  rooms: [
+    {n: "Malware Classification", k: [
+      "Por comportamiento: virus, gusano (se propaga solo), troyano (se disfraza), ransomware (cifra y extorsiona), spyware, keylogger, rootkit, backdoor, RAT, botnet, stealer.",
+      "Roles dentro de una cadena: **dropper/loader** (descarga o instala otra cosa) y **payload** (hace el daño).",
+      "El malware **sin archivo** (fileless) vive en memoria o en herramientas del sistema y evade muchas detecciones por firma."
+    ]},
+    {n: "Intro to Malware Analysis", k: [
+      "**Estático**: analizar sin ejecutar (hashes, cadenas, cabecera PE, importaciones).",
+      "**Dinámico**: ejecutar en un entorno aislado y observar archivos, registro, procesos y red.",
+      "Hazlo siempre en un laboratorio aislado o en un sandbox en línea; para un L1 el objetivo es obtener indicadores y comportamiento, no reversing profundo."
+    ]},
+    {n: "Living Off the Land Attacks", k: [
+      "Los atacantes abusan de binarios legítimos ya presentes (**LOLBins**): [[powershell]], [[certutil]], [[bitsadmin]], [[mshta]], [[rundll32]], [[regsvr32]], [[wmic]], [[schtasks]].",
+      "Se detectan por **contexto**: línea de comandos, proceso padre, ruta inusual, descarga desde internet por una herramienta que no suele hacerlo.",
+      "El proyecto LOLBAS documenta cada binario y su posible abuso."
+    ]},
+    {n: "Shadow Trace", c: 1, k: [
+      "Reto que aplica lo anterior sobre un caso práctico de actividad maliciosa.",
+      "Método: parte del indicador inicial, sigue el árbol de procesos y anota cada técnica observada."
+    ]}
+  ],
+  r: "Que la herramienta sea legítima no significa que el uso lo sea. Pregúntate siempre quién la lanzó, con qué argumentos y por qué ahora.",
+  tools: ["Sandboxes", "PEStudio", "Process Monitor", "LOLBAS"]
+},
+{
+  t: "Phishing Analysis",
+  g: "Analizar correos sospechosos de punta a punta: cabeceras, enlaces, adjuntos y medidas de prevención.",
+  rooms: [
+    {n: "Phishing Fundamentals", k: [
+      "Variantes: phishing masivo, **spear phishing** (dirigido), **whaling** (altos cargos), smishing, vishing, clonación de correos y **BEC** (fraude al ejecutivo).",
+      "Un correo de phishing suele combinar suplantación del remitente, urgencia y un enlace o adjunto."
+    ]},
+    {n: "Phishing Emails in Action", k: [
+      "Lee las **cabeceras**: compara [[From]], [[Reply-To]] y [[Return-Path]], revisa la cadena de [[Received]] de abajo hacia arriba y el [[Message-ID]].",
+      "Comprueba los resultados de **SPF, DKIM y DMARC** (ver la chuleta).",
+      "Analiza los enlaces sin hacer clic y los adjuntos sin abrirlos."
+    ]},
+    {n: "Phishing Analysis Tools", k: [
+      "Herramientas típicas: visor de cabeceras (PhishTool, MXToolbox), VirusTotal, URLScan, sandboxes y **CyberChef** para decodificar y defanguear.",
+      "Flujo: extraer indicadores (remitente, IP, URL, hash) → enriquecerlos → decidir y documentar."
+    ]},
+    {n: "Phishing Prevention", k: [
+      "Capas: SPF/DKIM/DMARC bien configurados, pasarela de correo con sandboxing, filtrado de DNS y web, bloqueo de adjuntos de riesgo, MFA y formación.",
+      "Un botón de «reportar phishing» da al SOC visibilidad rápida de las campañas."
+    ]},
+    {n: "The Greenholt Phish", c: 1, k: [
+      "Reto de análisis de un correo completo (archivo de correo): cabeceras, autenticación y adjunto.",
+      "Aplica la secuencia: remitente → servidor de origen → resultados SPF/DKIM → hash del adjunto → reputación."
+    ]},
+    {n: "Snapped Phish-ing Line", c: 1, k: [
+      "Reto de investigación de una campaña de phishing con varios correos e indicadores relacionados.",
+      "Busca patrones comunes entre mensajes (dominios, infraestructura, plantillas) para entender el alcance."
+    ]},
+    {n: "Phishing Unfolding", c: 1, k: [
+      "Reto que integra los pasos del módulo sobre un incidente de phishing que se va desarrollando.",
+      "Práctica de línea de tiempo: quién recibió, quién interactuó y qué ocurrió después en el endpoint."
+    ]}
+  ],
+  r: "El phishing es la puerta de entrada más frecuente. Dominar este módulo se nota directamente en tu primer mes como L1.",
+  tools: ["PhishTool", "CyberChef", "MXToolbox", "VirusTotal", "URLScan"]
+},
+{
+  t: "SIEM Triage for SOC",
+  g: "Llevar el triaje al SIEM: correlacionar logs de varias fuentes y construir una línea de tiempo del incidente.",
+  rooms: [
+    {n: "Log Analysis with SIEM", k: [
+      "Método: delimitar el tiempo, filtrar por host o usuario, **pivotar** de un indicador a otros campos y ordenar los eventos en una línea de tiempo.",
+      "Compara con una **línea base** de comportamiento normal para distinguir lo anómalo.",
+      "Recuerda que las horas pueden estar en zonas horarias distintas según la fuente."
+    ]},
+    {n: "Alert Triage With Splunk", k: [
+      "Parte de la alerta, extrae usuario, host e IP y busca eventos relacionados antes y después.",
+      "Usa [[stats]], [[table]], [[sort]] y [[timechart]] para resumir; valida con eventos crudos antes de concluir."
+    ]},
+    {n: "Alert Triage With Elastic", k: [
+      "Haz el mismo ejercicio con KQL en Discover: filtra por campo, añade columnas y pivota con clic sobre los valores.",
+      "Guarda las vistas útiles para repetir el análisis o compartirlo."
+    ]},
+    {n: "ItsyBitsy", c: 1, k: [
+      "Reto en Elastic centrado en tráfico HTTP anómalo que puede indicar actividad de C2.",
+      "Pista metodológica: busca patrones de repetición (balizas), user-agents poco habituales y destinos recurrentes."
+    ]},
+    {n: "Benign", c: 1, k: [
+      "Reto en Splunk sobre actividad sospechosa en un grupo concreto de equipos.",
+      "Pista metodológica: empieza por creación de procesos, identifica el usuario y el comportamiento inusual y amplía desde ahí."
+    ]}
+  ],
+  r: "La habilidad que separa a un buen L1 es pasar de una alerta aislada a una historia coherente con evidencia en varias fuentes.",
+  tools: ["Splunk", "Elastic / Kibana", "KQL", "SPL"]
+},
+{
+  t: "SOC L1 Capstone Challenges",
+  g: "Incidentes completos que juntan todo el path: documentos maliciosos, Windows, red, memoria y SIEM.",
+  rooms: [
+    {n: "Tempest", c: 1, k: [
+      "Investigación de un incidente con documento malicioso usando registros de Windows/Sysmon y captura de red.",
+      "Práctica: reconstruir la cadena desde la entrada hasta la persistencia y el C2."
+    ]},
+    {n: "Boogeyman 1", c: 1, k: [
+      "Caso que parte de un correo de phishing con adjunto; combina análisis del correo, logs de PowerShell y tráfico de red.",
+      "Practica extraer indicadores y ordenarlos en una línea de tiempo."
+    ]},
+    {n: "Boogeyman 2", c: 1, k: [
+      "Segundo caso de la serie, con foco en el documento malicioso y en el análisis de memoria.",
+      "Practica identificar procesos sospechosos y conexiones de la máquina comprometida."
+    ]},
+    {n: "Boogeyman 3", c: 1, k: [
+      "Tercer caso, investigado sobre un SIEM con múltiples fuentes de log.",
+      "Aquí se juntan correlación, árbol de procesos, movimiento lateral y exfiltración."
+    ]}
+  ],
+  r: "Haz la primera pasada sin mirar ayudas y apunta tus hipótesis. Al terminar, escribe un reporte de incidente como si fueras a escalarlo: es el mejor ensayo del trabajo real.",
+  tools: ["Todo lo anterior"]
+}
+];
+
+var KEY = "soc1-done";
+var done = {};
+try { done = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { done = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {} }
+
+function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function fmt(s) {
+  return esc(s)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\[\[(.+?)\]\]/g, "<code>$1</code>");
+}
+
+function build() {
+  var nav = document.getElementById("nav");
+  var wrap = document.getElementById("mods");
+  var navHtml = "", html = "";
+  MODS.forEach(function (m, i) {
+    var id = "m" + (i + 1);
+    navHtml += '<a href="#' + id + '" data-id="' + id + '"><span class="n">' + (i + 1) + '</span><span>' + esc(m.t) + '</span><span class="ok" aria-hidden="true">✓</span></a>';
+    html += '<section class="mod" id="' + id + '"><header><span class="big" aria-hidden="true">' + (i + 1) + '</span><div><h2>Módulo ' + (i + 1) + ': ' + esc(m.t) + '</h2><p class="lead">' + esc(m.g) + '</p></div></header>';
+    m.rooms.forEach(function (r) {
+      html += '<div class="room"><h3>' + esc(r.n) + (r.c ? ' <span class="tag">Reto / práctica</span>' : '') + '</h3><ul>';
+      r.k.forEach(function (k) { html += "<li>" + fmt(k) + "</li>"; });
+      html += "</ul></div>";
+    });
+    html += '<div class="nota"><strong>Para recordar.</strong> ' + fmt(m.r) + "</div>";
+    if (m.tools && m.tools.length) {
+      html += '<div class="tools">Herramientas y conceptos: ' + m.tools.map(function (t) { return '<span class="t">' + esc(t) + "</span>"; }).join("") + "</div>";
+    }
+    html += '<div class="done-row"><label><input type="checkbox" data-id="' + id + '"' + (done[id] ? " checked" : "") + '> Marcar módulo como estudiado</label></div></section>';
+  });
+  nav.innerHTML = navHtml;
+  wrap.innerHTML = html;
+  wrap.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t && t.matches('input[type="checkbox"][data-id]')) {
+      if (t.checked) done[t.getAttribute("data-id")] = 1; else delete done[t.getAttribute("data-id")];
+      save(); refresh();
+    }
+  });
+  refresh();
+}
+
+function refresh() {
+  var n = 0;
+  document.querySelectorAll("#nav a").forEach(function (a) {
+    var d = !!done[a.getAttribute("data-id")];
+    a.classList.toggle("done", d);
+    if (d) n++;
+  });
+  document.getElementById("pcount").textContent = n + " de " + MODS.length + " módulos estudiados";
+  document.getElementById("pbar").style.width = Math.round(n / MODS.length * 100) + "%";
+}
+
+function syncNav() {
+  var d = document.getElementById("navwrap");
+  d.open = window.matchMedia("(min-width: 901px)").matches;
+}
+
+build();
+syncNav();
+window.addEventListener("resize", syncNav);
+</script>
+</body>
+</html>
